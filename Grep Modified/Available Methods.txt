@@ -1,0 +1,48 @@
+turn - rotate degrees to the right
+
+turnHome - will turn towards the ships position
+
+turnTowards(int x, int y) - turn towards a position
+
+atShip() - reuturn is at ship
+
+getShipData() - returns 1000 ints when at the ship
+
+move() - go forward in the current direction
+
+atWater() - return 
+
+moveWasBlocked() - return true is move was blocked by apponent
+
+loadTomato() - if on pile and another grep there load a tomato
+
+carryingTomato() - return if we are carrying a tomato
+
+dropTomato() - if at ship counted, otherwise gone
+
+getTomatoes() - get a TomatoPile visiable to the grep
+
+numberOfOpponents(withTomatoes (bool)) - return the number of opponents hit by bomb
+numberOfFreinds
+
+getFriend() - get a greep in range
+
+randomChance(int percent) randomeChance 25 has a 25% chance to return true
+
+setMemory(int slot, int val) 4 locations 0-3
+
+getMemort()slot
+
+setFlag(int flag) 1 or 2
+
+isBlocking() - can set if this grep is blocking enemy greps allowing only ally
+
+block() block that turn
+
+kablam() drop a stinck bomb
+
+canMoveTo(int x, int y) - bool if i can move to that pos without being blocked
+
+
+
+

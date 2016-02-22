@@ -46,6 +46,7 @@ public class SimpleGreep extends Greep
     {
         super.act();   // do not delete! leave as first statement in act().        
 
+        
         // Before moving, lets check for food.
         checkFood();
             

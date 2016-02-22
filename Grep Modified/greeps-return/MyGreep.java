@@ -46,6 +46,7 @@ public class MyGreep extends Greep
     // Remember: you cannot extend the Greep's memory. So:
     // no additional fields (other than final fields) allowed in this class!
     
+    
     /**
      * Default constructor. Do not remove.
      */
@@ -60,18 +61,110 @@ public class MyGreep extends Greep
     public void act()
     {
         super.act();   // do not delete! leave as first statement in act().
-        if (carryingTomato()) {
-            if(atShip()) {
-                dropTomato();
-            }
-            else {
-                turnHome();
-                move();
+        
+        if(getMemory(0) > 0){
+            switch(getMemory(0)){
+                case 1:
+                    if(getTomatoes() != null){
+                        if(getFriend() != null){
+                            loadTomato();
+                        }
+                        else{
+                            block();
+                        }
+                    }
+                    else{
+                        setMemory(0,0);//collector
+                    }
+                    break;
             }
         }
         else {
-            randomWalk();
-            checkFood();
+           if (carryingTomato()) {
+               if(atShip()) {
+                   dropTomato();
+                   getLocation();
+               }
+               else {
+                   returnHome();
+               }
+            }
+            else {
+                if(moveWasBlocked() || atWater()){
+                    bounce();
+                }
+                else {
+                //Check if we can see tomatoes
+                    if(getTomatoes() != null){
+                    //how close are we
+                        if(onTomatos(getTomatoes())){
+                        //Check if there is a grep already blocking this
+                            if(getFriend() != null){
+                                if(getFriend().getMemory(0) == 1){
+                                    //then there is a blocker and it will also load up others
+                                    //This will work like a wait period allowing the blocker to
+                                    //give the collector tomatos
+                                }
+                                else{
+                                    setMemory(0,1);//Im BLOCKING
+                                    block();
+                                }
+                            }
+                            else {
+                                setMemory(0,1);//Im BLOCKING
+                                block();
+                            }
+                        }
+                        else{
+                            turnTowards(getTomatoes().getX(),getTomatoes().getY());
+                            move();
+                        }
+                    }
+                    else{
+                        if(numberOfOpponents(false) > numberOfFriends(false) + 1){
+                            kablam();
+                        }
+                        if(getMemory(0) == 2){
+                           //Know where to look
+                           if(moveWasBlocked() || atWater()){
+                                bounce();
+                            }
+                            else{
+                                turnTowards(getMemory(2),getMemory(3));
+                                move();
+                            }
+                        }
+                        else{
+                            //no idea where its going
+                            randomWalk();
+                        }
+                    }
+                }
+           }
+        }
+    }
+    
+    public void checkPosition(){
+    
+    public void getLocation(){
+        int databank[] = getShipData();
+        if(databank[0] > 0){
+            int counter = databank[0];
+            int pointer = 0;
+            
+            //check wihich place is the closes
+            int x = 999;
+            int y = 999;
+            for(int i = 1; i < counter; i++){
+                if(distance(x,y) > distance(databank[(i * 2) -1],databank[(i * 2)])){
+                   x = databank[(i * 2) -1];
+                   y = databank[(i * 2)]; 
+                }
+            }
+            //set the fastest poition
+            setMemory(0,2);
+            setMemory(2,x);
+            setMemory(3,y);
         }
     }
     
@@ -87,7 +180,18 @@ public class MyGreep extends Greep
         
         move();
     }
-
+    
+    public void returnHome(){
+        //First check im not stuck at water
+        if(moveWasBlocked() || atWater()){
+            bounce();
+        }
+        else{
+            turnHome();
+            move();
+        }
+    }
+    
     /**
      * Is there any food here where we are? If so, try to load some!
      */
@@ -101,13 +205,35 @@ public class MyGreep extends Greep
             // do anything if we are alone here.
         }
     }
-
+    
+    public int distance(int x, int y){
+        int distX = getX() - x;
+        int distY = getY() - y;
+        return (int) Math.sqrt(distX * distX + distY * distY);
+    }
+    
+    public boolean onTomatos(TomatoPile pile){
+        int distX = getX() - pile.getX();
+        int distY = getY() - pile.getY();
+        if((int) Math.sqrt(distX * distX + distY * distY) < 6){
+            return true;
+        }
+        return false;
+    }
+    
     /**
      * This method specifies the name of the greeps (for display on the result board).
      * Try to keep the name short so that it displays nicely on the result board.
      */
     public String getName()
     {
-        return "Your name here";  // write your name here!
+        return "HMS Apple";  // write your name here!
+    }
+    
+    
+    public void bounce()
+    {
+        turn(45);
+        move();
     }
 }
